@@ -26,7 +26,7 @@ $(document).ready(function () {
         var bv = $form.data('bootstrapValidator');
         var formData = $form.serialize();
         formData.email = eg;
-        var exec_url = 'https://script.google.com/macros/s/AKfycbwFX4Kb40_pAAB-DPEsg0jwxu8jJmztiAIjq8JH/exec';
+        var exec_url = 'https://script.google.com/macros/s/AKfycbx8U1IMSprqM2S3WLSUQmUfcozhzrSVhVMVwZROn7_yrYy4-S8/exec';
         sendData(formData, exec_url);
     });
 
@@ -34,12 +34,13 @@ $(document).ready(function () {
         $(".loading").show();
         
         var jqxhr = $.post(url, formData, function(data) {
-            console.log("Success! Data: " + JSON.stringify(data));
+            //console.log("Success! Data: " + JSON.stringify(data));
             if(data.result == "success" && data.name && data.name.length > 0) {
-                var n = '';
+                var name = '', college_dept_school_org = '';
                 var btn_p_w1 = '', btn_p_w2 = '', btn_p_w3 = '';
 
-                n = data.name;
+                name = data.name;
+                college_dept_school_org = data.college_dept_school_org;
 
                 if(data.is_participated_workshop_1)
                     btn_p_w1 = "<button id='gencert_1' class='btn btn-cyan waves-effect waves-light btn-background btn-block'><i class='fa fa-download'></i>" + certName[0] + " Certificate<i class='fa fa-circle-o-notch fa-spin loading1' style='display:none;'></i></button>";
@@ -51,21 +52,19 @@ $(document).ready(function () {
                     btn_p_w3 = "<button id='gencert_3' class='btn btn-cyan waves-effect waves-light btn-background btn-block'><i class='fa fa-download'></i>" + certName[2] + " Certificate<i class='fa fa-circle-o-notch fa-spin loading1' style='display:none;'></i></button>";
                 
 
-                var ehtml = "<div class='text-center'><h3 class='dark-grey-text'><strong>Verified</strong></h3><hr></div><div class='text-center'>Welcome!<h5 class='dark-grey-text'><strong>" + n + "</strong></h5></div><div class='text-center'  id='tryagain'>"+btn_p_w1+btn_p_w2+btn_p_w3+"</div>";
+                var ehtml = "<div class='text-center'><h3 class='dark-grey-text'><strong>Verified</strong></h3><hr></div><div class='text-center'>Welcome!<h5 class='dark-grey-text'><strong>" + name + "</strong></h5></div><div class='text-center'  id='tryagain'>"+btn_p_w1+btn_p_w2+btn_p_w3+"</div>";
                 $("#gcontent").html("" + ehtml);
 
                 //////////////
                 var eachCert = 1;
-                for (eachCert = 1; eachCert < 3; eachCert++) {
+                for (eachCert = 1; eachCert <= 3; eachCert++) {
                     $("#gencert_" + eachCert).on('click', function () {
                         $(".loading1").show();
                         $(this).attr('disabled', true);
                         var t = new jsPDF();
                         if (t != null) {
-                            console.log("==", eachCert);
-                            console.log($(this).attr('id'));
                             var cert_id = $(this).attr('id').split("_")[1];
-                            jsDoc(imgData[0], certName[cert_id - 1], data.name);
+                            jsDoc(imgData[cert_id - 1], certName[cert_id - 1], name, college_dept_school_org);
                             $(".loading1").hide();
                             $(this).attr('disabled', false);
                         } else {
@@ -93,7 +92,7 @@ $(document).ready(function () {
 });
 
 
-function jsDoc(imgData, certName, name) {
+function jsDoc(imgData, certName, name, college_dept_school_org) {
 
     var doc = new jsPDF({
         orientation: 'landscape',
@@ -104,6 +103,7 @@ function jsDoc(imgData, certName, name) {
     doc.addImage(imgData, 'JPEG', 0, 0, 632, 450);
     doc.setTextColor(0, 80, 130);
     doc.setFontSize(18);
-    doc.text(name, 316, 210, null, null, 'center');
+    doc.text(name, 316, 175, null, null, 'center');
+    doc.text(college_dept_school_org, 316, 216, null, null, 'center');
     doc.save("Certificate_of_"+certName+"_"+name+".pdf");
 }
