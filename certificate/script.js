@@ -88,7 +88,8 @@
 		canvas.node.onmousedown = function(e) {
 			ctx.strokeStyle = getRandomColor();
 			var pos = ctx.getCurrentCoordinates(e, this);
-			if(isWithinValidPartition(pos.y, listPartition[tries])) {
+			console.log(tries);
+			if(tries != -1 && isWithinValidPartition(pos.y, listPartition[tries])) {
 				isDrawing = true;
 				ctx.beginPath();
 				ctx.moveTo(pos.x, pos.y);
@@ -100,7 +101,7 @@
 		canvas.node.onmousemove = function(e) {
 			var pos = ctx.getCurrentCoordinates(e, this);
 			coord.innerHTML = '(' + pos.x + ',' + pos.y + ')';
-			if (isDrawing) {
+			if (tries != -1 && isDrawing) {
 				if(isWithinValidPartition(pos.y, listPartition[tries])) {
 					ctx.lineTo(pos.x, pos.y);
 					ctx.stroke();
@@ -113,7 +114,7 @@
 
 		canvas.node.onmouseup = function(e) {
 			isDrawing = false;
-			tries++;
+			tries = (tries != -1 && tries < listPartition.length - 1) ? tries + 1 : -1;
 		};
 		
     }
