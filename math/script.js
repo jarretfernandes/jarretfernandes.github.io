@@ -89,7 +89,7 @@
 			ctx.strokeStyle = getRandomColor();
 			var pos = ctx.getCurrentCoordinates(e, this);
 			console.log(tries);
-			if(tries != -1 && isWithinValidPartition(pos.y, listPartition[tries])) {
+			if((tries >-1 && tries < listPartition.length) && isWithinValidPartition(pos.y, listPartition[tries])) {
 				isDrawing = true;
 				ctx.beginPath();
 				ctx.moveTo(pos.x, pos.y);
@@ -100,21 +100,24 @@
 
 		canvas.node.onmousemove = function(e) {
 			var pos = ctx.getCurrentCoordinates(e, this);
-			coord.innerHTML = '(' + pos.x + ',' + pos.y + ')';
+			coord.innerHTML = '(' + pos.x + ',' + pos.y + ')' + ' | tries=' + tries;
 			if (tries != -1 && isDrawing) {
 				if(isWithinValidPartition(pos.y, listPartition[tries])) {
 					ctx.lineTo(pos.x, pos.y);
 					ctx.stroke();
 				} else {
 					isDrawing = false;
+					tries++;
 					playErrorSound();
 				}
 			}
 		};
 
 		canvas.node.onmouseup = function(e) {
+			var pos = ctx.getCurrentCoordinates(e, this);
+			tries = (isDrawing) ? tries + 1 : tries;
 			isDrawing = false;
-			tries = (tries != -1 && tries < listPartition.length - 1) ? tries + 1 : -1;
+			//tries = (tries != -1 && tries < listPartition.length - 1 && isWithinValidPartition(pos.y, listPartition[tries])) ? tries + 1 : -1;
 		};
 		
     }
