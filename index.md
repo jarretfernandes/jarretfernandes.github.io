@@ -1,1 +1,1 @@
-Jarret "Nanu" S.A.F.
+Jarret S.A.F.
